@@ -9,6 +9,7 @@
   },
     "compileOnOptions": {
         "lib": ["es2015"],
-        "dom": true
+        "dom": true,
+        "outDir": "dist",
     }
 }
