@@ -2,6 +2,7 @@ import { Bot, InlineKeyboard } from "grammy";
 import { branches, episodes, findBranch, findMember, userChoiceType, videoType } from './info';
 import { helloMesg } from "./messeges";
 import "dotenv/config";
+import express from 'express';
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 
@@ -274,3 +275,14 @@ bot.on("callback_query:data", async (ctx) => {
 });
 
 bot.start();
+
+const app = express();
+
+app.get("/", (_, res) => {
+  res.send("✅ Bot is running!");
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Web service running on port ${PORT}`);
+});
