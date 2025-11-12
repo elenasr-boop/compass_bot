@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node bot.ts'"
+    "build": "tsc",
+    "start": "node dist/bot.js"
   },
   "author": "",
   "license": "ISC",
