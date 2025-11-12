@@ -278,7 +278,7 @@ bot.start();
 
 const app = express();
 
-app.get("/", (_, res) => {
+app.get("/", (_: any, res: any) => {
   res.send("✅ Bot is running!");
 });
 
