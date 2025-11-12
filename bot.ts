@@ -1,8 +1,9 @@
 import { Bot, InlineKeyboard } from "grammy";
 import { branches, episodes, findBranch, findMember, userChoiceType, videoType } from './info';
 import { helloMesg } from "./messeges";
+import "dotenv/config";
 
-const bot = new Bot("8340876555:AAH9vt3dw8r8a3raJxIA9j9vxntTVpkqb3I");
+const bot = new Bot(process.env.BOT_TOKEN!);
 
 const userSettings: { [userId: number]: userChoiceType } = {};
 let currentEpisodes: videoType[] = episodes;
