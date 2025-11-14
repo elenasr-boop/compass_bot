@@ -474,16 +474,3 @@ export const episodes: videoType[] = [
         isFiller: true,
     },
 ];
-
-export const findMember = (member: string) => {
-    return episodes.filter((episode) => episode.members.includes(member));
-}
-
-export const findBranch = (branch: string, isFiller: boolean) => {
-    if (branch === "") {
-        return episodes.filter((episode) => isFiller || !episode.isFiller)
-    }
-
-    return episodes.filter((episode) => episode.branch.includes(branch) &&
-    (isFiller || !episode.isFiller))
-}
