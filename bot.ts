@@ -1,6 +1,6 @@
 import { Bot, InlineKeyboard } from "grammy";
 import { episodes } from "./info";
-import { helloMesg, startMessage } from "./messeges";
+import { helloImg, helloMesg, startMessage } from "./messeges";
 import "dotenv/config";
 import express from "express";
 import {
@@ -38,8 +38,6 @@ bot.command("start", async (ctx) => {
 bot.callbackQuery("home", async (ctx) => {
   const userId = ctx.from!.id;
   const user = userSettings[userId];
-  const helloImg =
-    "https://upload.wikimedia.org/wikipedia/ru/5/5f/%D0%9F%D0%BE%D0%B4%D0%B7%D0%B5%D0%BC%D0%B5%D0%BB%D1%8C%D1%8F_%D0%A7%D0%B8%D0%BA%D0%B5%D0%BD_%D0%9A%D0%B0%D1%80%D1%80%D0%B8_%D0%BB%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF.png";
 
   const keyboard = new InlineKeyboard()
     .text("Вернуться к просмотру эпизода ▶️", "episode")
@@ -132,11 +130,13 @@ bot.on("callback_query:data", async (ctx) => {
 
     case data === "confirm": {
       await ctx.answerCallbackQuery();
-      await filterEpisodes({
+      const res = await filterEpisodes({
         ctx: ctx,
         curEpisodes: currentEpisodes,
         user: userSettings[ctx.from!.id],
       });
+      currentEpisodes = res!.curEpisodes;
+      userSettings[ctx.from!.id] = res!.user;
       user.currentEpisode = 0;
       await showEpisode({
         ctx: ctx,
@@ -197,6 +197,22 @@ bot.on("callback_query:data", async (ctx) => {
 });
 
 bot.start();
+
+bot.catch(async (err) => {
+  const keyboard = new InlineKeyboard()
+    .text("Вернуться к просмотру эпизода ▶️", "episode")
+    .row()
+    .text("Настроить предпочтения ⚙️", "filter");
+  const userId = err.ctx.from!.id;
+
+  err.ctx.reply("Произошла ошибка, уже работаем над этим");
+  const msg = await err.ctx.replyWithPhoto(helloImg, {
+        caption: helloMesg,
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+      });
+      userSettings[userId].lastMessageId = msg.message_id;
+})
 
 const app = express();
 

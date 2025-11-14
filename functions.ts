@@ -64,7 +64,7 @@ export async function filterEpisodes({ctx, curEpisodes, user}: filterEpisodesTyp
     return;
   }
 
-  user.currentEpisode = 0;
+  return {curEpisodes, user}
 }
 
 export async function sendFilterMenu({ctx, user} : filterMenuType) {
