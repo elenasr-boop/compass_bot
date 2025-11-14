@@ -6,7 +6,7 @@ import {
   userChoiceType,
   videoType,
 } from "./info";
-import { helloMesg } from "./messeges";
+import { episodeMessage, helloMesg, startMessage } from "./messeges";
 import "dotenv/config";
 import express from "express";
 
@@ -21,23 +21,7 @@ async function showEpisode(ctx: any, currentEpisodeIndex: number) {
   const curEp = currentEpisodes[currentEpisodeIndex];
 
   const keyboard = buildEpisodeKeyboard(curEp);
-
-  const caption = `${
-    user.filter === ""
-      ? ""
-      : `Вы выбрали смотреть ветку ${user.filter} ${
-          user.isFiller ? "все выпуски" : "только самые важные"
-        }`
-  }
-  
-<b>🎬 Выпуск ${curEp.number}</b>
-${curEp.desc}
-<b>👥 Участники:</b>
-${curEp.members.join(", ")}
-<b>🌿 Ветка:</b> ${curEp.branch.join(", ")}
-<b>📺 Смотреть:</b> <a href="${curEp.url}">YouTube</a>${
-    curEp.vkUrl ? `\n<a href="${curEp.vkUrl}">VK Видео</a>` : ""
-  }`;
+  const caption = episodeMessage(user, curEp);
 
   try {
     if (user.lastMessageId) {
@@ -150,9 +134,9 @@ bot.command("start", async (ctx) => {
   };
 
   const msg = await ctx.replyWithPhoto(
-    "https://fileshare.kaverafisha.ru/storage/origin/2025/04/10/__d7a6bd2d292160351712ad784bb5eb02.webp",
+    startMessage.img,
     {
-      caption: `Приветствую голодного до приключений человека! Для начала ты можешь посмотреть первый выпуск Подземелий Чикен Карри или настроить предпочтения для того, чтобы я подсказал тебе лучший выпуск!\n\nОфициальный телеграм-канал Чикен Карри — @chickencurryshow`,
+      caption: startMessage.caption,
       reply_markup: new InlineKeyboard()
         .text("О шоу ℹ️", "home")
         .row()
