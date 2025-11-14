@@ -1,8 +1,14 @@
 import { Bot, InlineKeyboard } from "grammy";
-import { branches, episodes, findBranch, findMember, userChoiceType, videoType } from './info';
+import {
+  branches,
+  episodes,
+  findBranch,
+  userChoiceType,
+  videoType,
+} from "./info";
 import { helloMesg } from "./messeges";
 import "dotenv/config";
-import express from 'express';
+import express from "express";
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 
@@ -16,29 +22,37 @@ async function showEpisode(ctx: any, currentEpisodeIndex: number) {
 
   const keyboard = buildEpisodeKeyboard(curEp);
 
-  const caption = `${user.filter === "" ? '' : `Вы выбрали смотреть ветку ${user.filter} ${user.isFiller ? "все выпуски" : "только самые важные"}`}
+  const caption = `${
+    user.filter === ""
+      ? ""
+      : `Вы выбрали смотреть ветку ${user.filter} ${
+          user.isFiller ? "все выпуски" : "только самые важные"
+        }`
+  }
   
 <b>🎬 Выпуск ${curEp.number}</b>
 ${curEp.desc}
 <b>👥 Участники:</b>
 ${curEp.members.join(", ")}
 <b>🌿 Ветка:</b> ${curEp.branch.join(", ")}
-<b>📺 Смотреть:</b> <a href="${curEp.url}">YouTube</a>${curEp.vkUrl ? `\n<a href="${curEp.vkUrl}">VK Видео</a>` : ""}`;
+<b>📺 Смотреть:</b> <a href="${curEp.url}">YouTube</a>${
+    curEp.vkUrl ? `\n<a href="${curEp.vkUrl}">VK Видео</a>` : ""
+  }`;
 
   try {
     if (user.lastMessageId) {
       try {
         await ctx.editMessageMedia(
-        {
-          type: "photo",
-          media: curEp.img,
-          caption,
-          parse_mode: "HTML",
-        },
-        {
-          reply_markup: keyboard,
-        }
-      );
+          {
+            type: "photo",
+            media: curEp.img,
+            caption,
+            parse_mode: "HTML",
+          },
+          {
+            reply_markup: keyboard,
+          }
+        );
       } catch (err) {
         return;
       }
@@ -51,11 +65,15 @@ ${curEp.members.join(", ")}
       user.lastMessageId = msg.message_id;
     }
   } catch (err) {
-    const msg = await ctx.api.editMessageCaption(ctx.chat!.id, user.lastMessageId, {
-      caption: "Ждем выхода новых эпизодов 😅",
-      reply_markup: keyboard,
-    });
-user.lastMessageId = msg.message_id;
+    const msg = await ctx.api.editMessageCaption(
+      ctx.chat!.id,
+      user.lastMessageId,
+      {
+        caption: "Ждем выхода новых эпизодов 😅",
+        reply_markup: keyboard,
+      }
+    );
+    user.lastMessageId = msg.message_id;
   }
 }
 
@@ -92,10 +110,16 @@ function buildKeyboard(user: userChoiceType) {
     keyboard.text(`${selectedMark} ${opt}`, `choose:${opt}`).row();
   }
 
-  keyboard.text(
-    `${user.isFiller ? "✅ Смотреть все выпуски" : "❌ Опустить незначительные выпуски"} `,
-    "toggle_extra"
-  ).row();
+  keyboard
+    .text(
+      `${
+        user.isFiller
+          ? "✅ Смотреть все выпуски"
+          : "❌ Опустить незначительные выпуски"
+      } `,
+      "toggle_extra"
+    )
+    .row();
 
   keyboard.text("Подтвердить выбор", "confirm");
 
@@ -123,18 +147,20 @@ bot.command("start", async (ctx) => {
     isFiller: true,
     currentEpisode: 0,
     filter: "",
-  }
+  };
 
-  const msg = await ctx.replyWithPhoto("https://fileshare.kaverafisha.ru/storage/origin/2025/04/10/__d7a6bd2d292160351712ad784bb5eb02.webp", 
+  const msg = await ctx.replyWithPhoto(
+    "https://fileshare.kaverafisha.ru/storage/origin/2025/04/10/__d7a6bd2d292160351712ad784bb5eb02.webp",
     {
       caption: `Приветствую голодного до приключений человека! Для начала ты можешь посмотреть первый выпуск Подземелий Чикен Карри или настроить предпочтения для того, чтобы я подсказал тебе лучший выпуск!\n\nОфициальный телеграм-канал Чикен Карри — @chickencurryshow`,
       reply_markup: new InlineKeyboard()
         .text("О шоу ℹ️", "home")
         .row()
-        .text('Начать смотреть ▶️', 'episode')
+        .text("Начать смотреть ▶️", "episode")
         .row()
-        .text('Настроить предпочтения ⚙️', 'filter'),
-    });
+        .text("Настроить предпочтения ⚙️", "filter"),
+    }
+  );
   userSettings[ctx.from!.id].lastMessageId = msg.message_id;
 });
 
@@ -149,8 +175,8 @@ bot.callbackQuery("home", async (ctx) => {
     .row()
     .text("Настроить предпочтения ⚙️", "filter");
 
-  try {
-    if (user?.lastMessageId) {
+  if (user?.lastMessageId) {
+    try {
       await ctx.api.editMessageMedia(
         ctx.chat!.id,
         user.lastMessageId,
@@ -164,7 +190,8 @@ bot.callbackQuery("home", async (ctx) => {
           reply_markup: keyboard,
         }
       );
-    } else {
+    } catch (err) {
+      console.error("Ошибка при редактировании сообщения:", err);
       const msg = await ctx.replyWithPhoto(helloImg, {
         caption: helloMesg,
         parse_mode: "HTML",
@@ -172,8 +199,7 @@ bot.callbackQuery("home", async (ctx) => {
       });
       userSettings[userId].lastMessageId = msg.message_id;
     }
-  } catch (err) {
-    console.error("Ошибка при редактировании сообщения:", err);
+  } else {
     const msg = await ctx.replyWithPhoto(helloImg, {
       caption: helloMesg,
       parse_mode: "HTML",
@@ -206,76 +232,77 @@ bot.on("callback_query:data", async (ctx) => {
   if (!user) return;
 
   switch (true) {
-  case data.startsWith("choose:"): {
-    const chosen = data.split(":")[1];
-    user.filter = user.filter === chosen ? "" : chosen;
+    case data.startsWith("choose:"): {
+      const chosen = data.split(":")[1];
+      user.filter = user.filter === chosen ? "" : chosen;
 
-    await ctx.editMessageReplyMarkup({
-      reply_markup: buildKeyboard(user),
-    });
+      await ctx.editMessageReplyMarkup({
+        reply_markup: buildKeyboard(user),
+      });
 
-    await ctx.answerCallbackQuery();
-    break;
-  }
-
-  case data === "toggle_extra": {
-    user.isFiller = !user.isFiller;
-
-    await ctx.editMessageReplyMarkup({
-      reply_markup: buildKeyboard(user),
-    });
-
-    await ctx.answerCallbackQuery();
-    break;
-  }
-
-  case data === "confirm": {
-    await ctx.answerCallbackQuery();
-    await filterEpisodes(ctx);
-    user.currentEpisode = 0;
-    await showEpisode(ctx, user.currentEpisode);
-    break;
-  }
-
-  case data === "prev": {
-    user.currentEpisode -= 1;
-    if (user.currentEpisode < 0) {
-      await ctx.reply("Раньше этой ветки не было :(");
-      await sendFilterMenu(ctx);
-    } else {
-      await showEpisode(ctx, user.currentEpisode);
+      await ctx.answerCallbackQuery();
+      break;
     }
-    await ctx.answerCallbackQuery();
-    break;
-  }
 
-  case data === "next": {
-    user.currentEpisode += 1;
-    if (user.currentEpisode === currentEpisodes.length) {
-      await ctx.reply("Ждем выхода новых эпизодов 🥺");
-      await sendFilterMenu(ctx);
-    } else {
-      await showEpisode(ctx, user.currentEpisode);
+    case data === "toggle_extra": {
+      user.isFiller = !user.isFiller;
+
+      await ctx.editMessageReplyMarkup({
+        reply_markup: buildKeyboard(user),
+      });
+
+      await ctx.answerCallbackQuery();
+      break;
     }
-    await ctx.answerCallbackQuery();
-    break;
-  }
 
-  case data.startsWith("member:"): {
-    const memberName = data.split(":")[1];
-    currentEpisodes = episodes.filter((ep) => ep.members.includes(memberName));
-    user.currentEpisode = 0;
-    await showEpisode(ctx, user.currentEpisode);
-    await ctx.answerCallbackQuery();
-    break;
-  }
+    case data === "confirm": {
+      await ctx.answerCallbackQuery();
+      await filterEpisodes(ctx);
+      user.currentEpisode = 0;
+      await showEpisode(ctx, user.currentEpisode);
+      break;
+    }
 
-  default: {
-    await ctx.answerCallbackQuery();
-    break;
-  }
-}
+    case data === "prev": {
+      user.currentEpisode -= 1;
+      if (user.currentEpisode < 0) {
+        await ctx.reply("Раньше этой ветки не было :(");
+        await sendFilterMenu(ctx);
+      } else {
+        await showEpisode(ctx, user.currentEpisode);
+      }
+      await ctx.answerCallbackQuery();
+      break;
+    }
 
+    case data === "next": {
+      user.currentEpisode += 1;
+      if (user.currentEpisode === currentEpisodes.length) {
+        await ctx.reply("Ждем выхода новых эпизодов 🥺");
+        await sendFilterMenu(ctx);
+      } else {
+        await showEpisode(ctx, user.currentEpisode);
+      }
+      await ctx.answerCallbackQuery();
+      break;
+    }
+
+    case data.startsWith("member:"): {
+      const memberName = data.split(":")[1];
+      currentEpisodes = episodes.filter((ep) =>
+        ep.members.includes(memberName)
+      );
+      user.currentEpisode = 0;
+      await showEpisode(ctx, user.currentEpisode);
+      await ctx.answerCallbackQuery();
+      break;
+    }
+
+    default: {
+      await ctx.answerCallbackQuery();
+      break;
+    }
+  }
 });
 
 bot.start();
