@@ -27,7 +27,8 @@ ${curEp.members.join(", ")}
 
   try {
     if (user.lastMessageId) {
-      await ctx.editMessageMedia(
+      try {
+        await ctx.editMessageMedia(
         {
           type: "photo",
           media: curEp.img,
@@ -38,6 +39,9 @@ ${curEp.members.join(", ")}
           reply_markup: keyboard,
         }
       );
+      } catch (err) {
+        return;
+      }
     } else {
       const msg = await ctx.replyWithPhoto(curEp.img, {
         caption,
@@ -248,7 +252,7 @@ bot.on("callback_query:data", async (ctx) => {
   case data === "next": {
     user.currentEpisode += 1;
     if (user.currentEpisode === currentEpisodes.length) {
-      await ctx.reply("Ждем выхода новых эпизодов");
+      await ctx.reply("Ждем выхода новых эпизодов 🥺");
       await sendFilterMenu(ctx);
     } else {
       await showEpisode(ctx, user.currentEpisode);
