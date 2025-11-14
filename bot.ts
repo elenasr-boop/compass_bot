@@ -1,5 +1,5 @@
 import { Bot, InlineKeyboard } from "grammy";
-import { episodes, userChoiceType, videoType } from "./info";
+import { episodes } from "./info";
 import { helloMesg, startMessage } from "./messeges";
 import "dotenv/config";
 import express from "express";
@@ -9,6 +9,7 @@ import {
   sendFilterMenu,
   showEpisode,
 } from "./functions";
+import { userChoiceType, videoType } from "./types";
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 

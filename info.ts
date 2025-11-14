@@ -1,21 +1,4 @@
-export type videoType = {
-    number: number;
-    name: string;
-    branch: string[];
-    members: string[];
-    desc: string;
-    img: string;
-    url: string | string[];
-    vkUrl?: string;
-    isFiller: boolean;
-};
-
-export type userChoiceType = {
-    isFiller: boolean, 
-    currentEpisode: number,
-    filter: string,
-    lastMessageId?: number,
-};
+import { videoType } from "./types";
 
 export const branches = [
     "Сфинктериона",

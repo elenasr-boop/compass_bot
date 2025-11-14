@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "grammy";
-import { branches, episodes, userChoiceType, videoType } from "./info";
+import { branches, episodes } from "./info";
 import { episodeMessage } from "./messeges";
+import { filterEpisodesType, filterMenuType, showEpisodeType, userChoiceType, videoType } from "./types";
 
 const findBranch = (branch: string, isFiller: boolean) => {
   if (branch === "") {
@@ -53,12 +54,6 @@ export function buildFilterKeyboard(user: userChoiceType) {
   return keyboard;
 }
 
-type filterEpisodesType = {
-    ctx: any,
-    curEpisodes: videoType[],
-    user: userChoiceType,
-}
-
 export async function filterEpisodes({ctx, curEpisodes, user}: filterEpisodesType) {
   if (!user) return;
 
@@ -72,23 +67,12 @@ export async function filterEpisodes({ctx, curEpisodes, user}: filterEpisodesTyp
   user.currentEpisode = 0;
 }
 
-type filterMenuType = {
-    ctx: any,
-    user: userChoiceType,
-}
-
 export async function sendFilterMenu({ctx, user} : filterMenuType) {
   const keyboard = buildFilterKeyboard(user);
 
   await ctx.reply("Выбери ветку:", {
     reply_markup: keyboard,
   });
-}
-
-type showEpisodeType = {
-    ctx: any,
-    curEp: videoType,
-    user: userChoiceType,
 }
 
 export async function showEpisode({ctx, curEp, user}: showEpisodeType) {
