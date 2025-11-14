@@ -1,21 +1,4 @@
-export type videoType = {
-    number: number;
-    name: string;
-    branch: string[];
-    members: string[];
-    desc: string;
-    img: string;
-    url: string | string[];
-    vkUrl?: string;
-    isFiller: boolean;
-};
-
-export type userChoiceType = {
-    isFiller: boolean, 
-    currentEpisode: number,
-    filter: string,
-    lastMessageId?: number,
-};
+import { videoType } from "./types";
 
 export const branches = [
     "Сфинктериона",
@@ -474,17 +457,3 @@ export const episodes: videoType[] = [
         isFiller: true,
     },
 ];
-
-export const findMember = (member: string) => {
-    return episodes.filter((episode) => episode.members.includes(member));
-}
-
-export const findBranch = (branch: string, isFiller: boolean) => {
-    if (branch === "") {
-        return episodes.filter((episode) => isFiller || !episode.isFiller)
-    }
-
-    return episodes.filter((episode) => episode.branch.includes(branch) &&
-    (isFiller || !episode.isFiller))
-}
-

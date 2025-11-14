@@ -1,11 +1,42 @@
+import { userChoiceType, videoType } from "./types";
+
+type startMessageType = {
+    img: string,
+    caption: string,
+}
+
+export const startMessage: startMessageType = {
+  img: "https://fileshare.kaverafisha.ru/storage/origin/2025/04/10/__d7a6bd2d292160351712ad784bb5eb02.webp",
+  caption: `Приветствую голодного до приключений человека! Для начала ты можешь посмотреть первый выпуск Подземелий Чикен Карри или настроить предпочтения для того, чтобы я подсказал тебе лучший выпуск!\n\nОфициальный телеграм-канал Чикен Карри — @chickencurryshow`,
+};
+
 export const helloMesg = `Подземелья Чикен Карри — российское юмористическое шоу на YouTube, где знаменитости играют в фэнтезийную ролевую игру, основанную на Dungeons & Dragons. 
 
 Его авторами являются несравненные Григорий Шатохин и Вадим Серезнёв, а бессменным мастером игры - Александр Бреганов https://t.me/no_roleplaying.
 
 Постоянные участники, всегда выдающие крутую игру - Александр Гудков https://www.instagram.com/gudokgudok/ и Большой Русский Босс https://www.instagram.com/the_boss_hhf/.
 
-Youtube - https://www.youtube.com/@chickencurryshow
-VK - https://vkvideo.ru/@chickencurry
-Telegram - @chickencurryshow
-Inst - https://www.instagram.com/chickencurryshow 
-TikTok - https://www.tiktok.com/@chickencurryshow`
+<b>Youtube</b> - https://www.youtube.com/@chickencurryshow
+<b>VK</b> - https://vkvideo.ru/@chickencurry
+<b>Telegram</b> - @chickencurryshow
+<b>Inst</b> - https://www.instagram.com/chickencurryshow 
+<b>TikTok</b> - https://www.tiktok.com/@chickencurryshow`;
+
+export function episodeMessage (user: userChoiceType, curEp: videoType) {
+    return (`${
+      user.filter === ""
+        ? ""
+        : `Вы выбрали смотреть ветку ${user.filter} ${
+            user.isFiller ? "все выпуски" : "только самые важные"
+          }`
+    }
+  
+<b>🎬 Выпуск ${curEp.number}</b>
+${curEp.desc}
+<b>👥 Участники:</b>
+${curEp.members.join(", ")}
+<b>🌿 Ветка:</b> ${curEp.branch.join(", ")}
+<b>📺 Смотреть:</b> <a href="${curEp.url}">YouTube</a>${
+      curEp.vkUrl ? `\n<a href="${curEp.vkUrl}">VK Видео</a>` : ""
+    }`);
+}
