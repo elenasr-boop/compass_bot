@@ -1,4 +1,4 @@
-import { userChoiceType, videoType } from "./info";
+import { userChoiceType, videoType } from "./types";
 
 type startMessageType = {
     img: string,
